@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>No Man Sky Craft</title>
+        <style>
+             #inventory {
+            }
+             #content {
+                 border: 3px solid red;
+             }
+             #items {
+                 float: left;
+                 margin: auto;
+                width: 500px;
+                 border: 3px solid yellow;
+                 clear:both;
+             }
+             #inventory {
+                 float: left;
+                 margin: auto;
+                width: 500px;
+                 border: 3px solid blue;
+             }
+             #canmake {
+                 float: left;
+                 margin: auto;
+                width: 500px;
+                 border: 3px solid green;
+             }
+        </style>
+    </head>
+    <body>
+        <div id='content'>
+
+         <div id='inventory'>
+             <h3>Inventory</h3>
+             <table border="0" cellspacing="5" cellpadding="5">
+             <thead>
+             <tr>
+                 <th>Item</th>
+                 <th>Quantity</th>
+                 <th>Price</th>
+                 <th></th>
+             </tr>
+             </thead>
+             <tbody>
+             </tbody>
+             </table>
+             <span>Total Value: <span id="total">0</span></span>
+             <div id='inventoryinput'>
+                 <select id='inventoryitem'/>
+                 <input type='number' id='inventoryquantity' value="1"/>
+                 <button type='button' id='inventoryadd'>Add</button>
+             </div>
+         </div>
+
+         <div id='canmake'>
+             <h3>Crafting</h3>
+             <table border="0" cellspacing="5" cellpadding="5">
+             <thead>
+             <tr>
+                 <th>Item</th>
+                 <th>Price</th>
+                 <th>Recipe</th>
+                 <th></th>
+             </tr>
+             </thead>
+             <tbody>
+             </tbody>
+             </table>
+         </div>
+
+         <div id='items'>
+             <h3>Items and Recipes</h3>
+             <table border="0" cellspacing="5" cellpadding="5">
+             <thead>
+             <tr>
+                 <th>Item</th>
+                 <th>Price</th>
+                 <th>Recipe</th>
+             </tr>
+             </thead>
+             <tbody>
+             </tbody>
+             </table>
+         </div>
+
+        </div>
+         <script src="https://code.jquery.com/jquery-3.1.0.js"
+                 integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk=" crossorigin="anonymous"></script>
+         <script src='static/app.js'></script>
+    </body>
+</html>
