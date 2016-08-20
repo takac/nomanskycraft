@@ -47,24 +47,45 @@ function get_item_image_path(item) {
 
 function populate_item_table(items) {
     $.each(items, function(item) {
+        var required_for = [];
+        for (var i in items) {
+            if ( items[i].hasOwnProperty('recipe') ) {
+                if ( items[i]['recipe'].hasOwnProperty(item) ) {
+                    required_for.push(i);
+                }
+            }
+        }
         $("#items").find('tbody').append(
-            $('<tr>').append(
+            $('<tr>').attr('id', item_to_link(item)).append(
                 $('<td>').append(
                     $("<img>").attr("src", get_item_image_path(item)),
-                    $("<span>").text(item)),
+                    $("<span>").text(item).addClass('name')),
                 $('<td>').append(
                     $("<input>",
                         {type: "number", step:"0.01"})
                     .val(items[item].price)
+                    .addClass('price')
                     .change(function() {
                         update_inventory(item, 0);
                         update_can_make();
                     })
                 ),
-                $('<td>').text(JSON.stringify(items[item].recipe))
+                $('<td>')
+                .addClass('recipe')
+                .html(render_recipe(item, items[item].recipe || {}))
+                .data("recipe", items[item].recipe), $('<td>').html(function() {
+                    return required_for.map(function(i) {
+                        return "<a href='#" + item_to_link(i) + "'>" + i + "</a>";
+                    }).join(", ");
+                })
+
             )
         )
     })
+}
+
+function item_to_link(item) {
+    return item.replace(/ /g, "").toLowerCase();
 }
 
 function inventory_table_inputs(items) {
@@ -88,14 +109,14 @@ function add_item() {
 
 function update_inventory(item, quantity_change) {
     var tbody = $("#inventory tbody");
-    var td = tbody.find("tr td:contains(" + item + ")");
-    if (td.length == 1) {
-        var q = $(td).siblings().eq(2);
-        var price = $(td).siblings().eq(3);
+    var tr = tbody.find("tr:contains(" + item + ")");
+    if (tr.length == 1) {
+        var q = $(tr).find('.quantity');
+        var price = $(tr).find('.price');
         var new_quant = parseInt(q.text()) + parseInt(quantity_change);
         price.text((get_price(item) * new_quant).toMoney());
         if (new_quant == 0) {
-            td.parents("tr").remove();
+            tr.remove();
         } else {
             q.text(new_quant);
         }
@@ -115,14 +136,14 @@ function create_inventory_row(item, quantity, price) {
                 update_total();
             }).html("&#10006;")
         ),
-        $('<td>').addClass('itemname').append(
-            $("<span>").text(item)
+        $('<td>').append(
+            $("<a>").attr('href', '#'+item_to_link(item)).addClass('name').text(item)
         ),
         $('<td>').append(
             $("<img>").attr("src", get_item_image_path(item))
         ),
-        $('<td>').text(quantity),
-        $('<td>').text((quantity * price).toMoney())
+        $('<td>').addClass('quantity').text(quantity),
+        $('<td>').addClass('price').text((quantity * price).toMoney())
     )
 }
 
@@ -137,10 +158,10 @@ function get_all_items() {
     var items = {};
     $("#items").find('tbody tr').each(function(idx, tr) {
         var tds = $(tr).find("td");
-        var item = {"price": tds.eq(1).find("input").val()};
+        var item = {"price": tds.find("input.price").val()};
         var recipe = tds.eq(2).text();
         if ( recipe !== "" ) {
-            item["recipe"] = JSON.parse(tds.eq(2).text())
+            item["recipe"] = tds.eq(2).data('recipe')
         }
         items[tds.eq(0).text()] = item;
     });
@@ -172,7 +193,7 @@ function get_inventory() {
     var inv = {};
     $.each(trs, function() {
         var tds = $(this).find("td");
-        inv[$(tds.find("span")).text()] = parseInt($(tds.get(3)).text());
+        inv[tds.find(".name").text()] = parseInt($(tds.get(3)).text());
     });
     return inv;
 }
@@ -194,16 +215,23 @@ function update_can_make() {
     }
 }
 
+function render_recipe(item, recipe) {
+    if (typeof recipe === "undefined") {
+        recipe = get_recipe(item);
+    }
+    return Object.keys(recipe).map(function(i) {
+        return "<span class='breakline'><a href='#" + item_to_link(i) + "'>" + i + "</a> x"+recipe[i]+"</span>";
+    });
+}
+
 function create_crafting_row(item) {
     return $("<tr>").append(
-        $("<td>").text(item),
-        $('<td>').text(get_price(item).toMoney()),
-        $('<td>').text(
-            JSON.stringify(get_recipe(item))
-            ),
+        $("<td>").addClass('name').text(item),
+        $('<td>').addClass('price').text(get_price(item).toMoney()),
+        $('<td>').addClass('recipe').html(render_recipe(item)),
         $("<td>").append(
                 $("<button>").text("Craft").click(function() {
-                var item = $(this).parents("tr").find("td").eq(0).text();
+                var item = $(this).parents("tr").find(".name").eq(0).text();
                 craft_item_from_inventory(item);
             })
     ))
@@ -260,7 +288,7 @@ Number.prototype.toMoney = function(decimals, decimal_sep, thousands_sep)
 
 $(function () {
     $.getJSON( "/base.json", function(items) {
-        $("#itemstable").toggle();
+        // $("#itemstable").toggle();
         populate_item_table(items)
         inventory_table_inputs(items)
         $("#inventoryitem").chosen();
