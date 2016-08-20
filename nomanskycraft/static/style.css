@@ -1,0 +1,57 @@
+#content {
+    font-family: 'Raleway', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+body {
+    padding-bottom: 50px;
+}
+#items {
+    width: 500px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+#inventory {
+    margin: auto;
+    position:relative;
+    width: 500px;
+    min-height: 200px;
+}
+#inventory table {
+    margin-bottom: 50px;
+}
+
+#inventoryinput {
+    position: absolute;
+    bottom: 0px;
+}
+#totalwrapper {
+    position: absolute;
+    right: 10px;
+    bottom: 25px;
+}
+
+#canmake {
+    float: left;
+    margin: auto;
+    width: 500px;
+    min-height: 200px;
+}
+
+table, th, td{ 
+    margin-left: auto;
+    margin-right: auto;
+    cellspacing:5px;
+    cellpadding: 20px;
+    width: 100%;
+}
+th, td {
+    border: 2px solid black;
+    padding: 15px;
+}
+
+
+h1, h2, h3, h4 {
+    text-align: center;
+}

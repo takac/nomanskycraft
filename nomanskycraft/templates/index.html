@@ -4,92 +4,80 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width" />
         <title>No Man Sky Craft</title>
-        <style>
-             #inventory {
-            }
-             #content {
-                 border: 3px solid red;
-             }
-             #items {
-                 float: left;
-                 margin: auto;
-                width: 500px;
-                 border: 3px solid yellow;
-                 clear:both;
-             }
-             #inventory {
-                 float: left;
-                 margin: auto;
-                width: 500px;
-                 border: 3px solid blue;
-             }
-             #canmake {
-                 float: left;
-                 margin: auto;
-                width: 500px;
-                 border: 3px solid green;
-             }
-        </style>
+        <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+        <link rel="stylesheet" href="/static/style.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="/static/chosen.css" type="text/css" media="screen" title="no title" charset="utf-8">
     </head>
     <body>
         <div id='content'>
+            <h1 id='title'>No Man Sky Craft</h1>
 
-         <div id='inventory'>
-             <h3>Inventory</h3>
-             <table border="0" cellspacing="5" cellpadding="5">
-             <thead>
-             <tr>
-                 <th>Item</th>
-                 <th>Quantity</th>
-                 <th>Price</th>
-                 <th></th>
-             </tr>
-             </thead>
-             <tbody>
-             </tbody>
-             </table>
-             <span>Total Value: <span id="total">0</span></span>
-             <div id='inventoryinput'>
-                 <select id='inventoryitem'/>
-                 <input type='number' id='inventoryquantity' value="1"/>
-                 <button type='button' id='inventoryadd'>Add</button>
-             </div>
-         </div>
+            <div id='inventory'>
 
-         <div id='canmake'>
-             <h3>Crafting</h3>
-             <table border="0" cellspacing="5" cellpadding="5">
-             <thead>
-             <tr>
-                 <th>Item</th>
-                 <th>Price</th>
-                 <th>Recipe</th>
-                 <th></th>
-             </tr>
-             </thead>
-             <tbody>
-             </tbody>
-             </table>
-         </div>
+                <h3>Inventory</h3>
 
-         <div id='items'>
-             <h3>Items and Recipes</h3>
-             <table border="0" cellspacing="5" cellpadding="5">
-             <thead>
-             <tr>
-                 <th>Item</th>
-                 <th>Price</th>
-                 <th>Recipe</th>
-             </tr>
-             </thead>
-             <tbody>
-             </tbody>
-             </table>
-         </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+                <div id='totalwrapper'>
+                    Total Value: <span id="total">0</span>
+                </div>
+                <div id='inventoryinput'>
+                    <select id='inventoryitem'></select>
+                    <input type='number' id='inventoryquantity' value="250"/>
+                    <input type='button' id='inventoryadd' value='Add'></input>
+                </div>
+            </div>
+
+
+            <div id='canmake'>
+                <h3>Crafting</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Price</th>
+                            <th>Recipe</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id='items'>
+                <h3>Prices and Recipes</h3>
+                <input type='button' id='toggleitems' value='Toggle'></input>
+                <div id='itemstable'>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Recipe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
         </div>
-         <script src="https://code.jquery.com/jquery-3.1.0.js"
-                 integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk=" crossorigin="anonymous"></script>
-         <script src='static/app.js'></script>
+        <script src="https://code.jquery.com/jquery-3.1.0.js"
+                integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk=" crossorigin="anonymous"></script>
+        <script src='/static/chosen.jquery.js'></script>
+        <script src='/static/chosen.proto.js'></script>
+        <script src='/static/app.js'></script>
     </body>
 </html>

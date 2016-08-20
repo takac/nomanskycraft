@@ -67,43 +67,48 @@ function inventory_table_inputs(items) {
                         .attr("value", item)
                         .text(item)); 
     });
-    $("#inventoryadd").click(function() {
-        var item = $("#inventoryitem").val();
-        var quant = $("#inventoryquantity").val();
-        update_inventory(item, quant);
-        update_can_make();
-
-    });
+	select.enterKey(add_item);
+    $("#inventoryquantity").enterKey(add_item);
+    $("#inventoryadd").click(add_item);
 
 }
+function add_item() {
+	var item = $("#inventoryitem").val();
+	var quant = $("#inventoryquantity").val();
+	update_inventory(item, quant);
+	update_can_make();
+}
 
-function update_inventory(item, quantity) {
-    var tbody = $("#inventory").find('tbody');
+function update_inventory(item, quantity_change) {
+    var tbody = $("#inventory tbody");
     var td = tbody.find("tr td:contains(" + item + ")");
     if (td.length == 1) {
         var q = $(td).siblings().eq(0);
-        var new_quant = parseInt(q.text()) + parseInt(quantity);
+        var price = $(td).siblings().eq(1);
+        var new_quant = parseInt(q.text()) + parseInt(quantity_change);
+        price.text(get_price(item) * new_quant);
         if (new_quant == 0) {
             td.parents("tr").remove();
         } else {
             q.text(new_quant);
         }
-    } else if (quantity > 0) {
-        tbody.append(create_inventory_row(item, quantity, get_price(item)));
+    } else if (quantity_change > 0) {
+        tbody.append(create_inventory_row(item, quantity_change, get_price(item)));
     }
     update_total()
 }
 
 function create_inventory_row(item, quantity, price) {
     return $('<tr>').append(
-        $('<td>').text(item),
-        $('<td>').text(quantity),
-        $('<td>').text(quantity * price),
-        $('<td>').append(
+        $('<td>')
+        .append(
             $("<button>").click(function() {
-                $(this).parents("tr").remove()
-            }).text("Remove")
-        )
+                $(this).parents("tr").remove();
+                update_can_make();
+            }).text("X")
+        ).append($("<span>").text(item)),
+        $('<td>').text(quantity),
+        $('<td>').text(quantity * price)
     )
 }
 
@@ -153,7 +158,7 @@ function get_inventory() {
     var inv = {};
     $.each(trs, function() {
         var tds = $(this).find("td");
-        inv[$(tds.get(0)).text()] = parseInt($(tds.get(1)).text());
+        inv[$(tds.find("span")).text()] = parseInt($(tds.get(1)).text());
     });
     return inv;
 }
@@ -197,9 +202,28 @@ function craft_item_from_inventory(item) {
     update_can_make();
 }
 
+// From http://stackoverflow.com/questions/979662/how-to-detect-pressing-enter-on-keyboard-using-jquery
+$.fn.enterKey = function (fnc) {
+    return this.each(function () {
+        $(this).keypress(function (ev) {
+            var keycode = (ev.keyCode ? ev.keyCode : ev.which);
+            if (keycode == '13') {
+                fnc.call(this, ev);
+            }
+        })
+    })
+}
+
 $(function () {
     $.getJSON( "/base.json", function(items) {
+        $("#itemstable").toggle();
         populate_item_table(items)
         inventory_table_inputs(items)
+        $("#inventoryitem").chosen();
+        $("#toggleitems").click(function() { $("#itemstable").toggle() });
+        update_inventory('Carbon', 250);
+        update_inventory('Plutonium', 250);
+        update_inventory('Iron', 250);
+        update_can_make();
     })
 });
