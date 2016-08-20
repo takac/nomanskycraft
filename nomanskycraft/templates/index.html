@@ -19,18 +19,24 @@
                 <table>
                     <thead>
                         <tr>
+                            <th class='noborder'></th>
                             <th>Item</th>
+                            <th></th>
                             <th>Quantity</th>
                             <th>Price</th>
                         </tr>
                     </thead>
                     <tbody>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th class='noborder'></th>
+                            <th colspan='3'>Total</th>
+                            <th><span id="total">0</span></th>
+                        </tr>
+                    </tfoot>
                 </table>
 
-                <div id='totalwrapper'>
-                    Total Value: <span id="total">0</span>
-                </div>
                 <div id='inventoryinput'>
                     <select id='inventoryitem'></select>
                     <input type='number' id='inventoryquantity' value="250"/>

@@ -13,7 +13,7 @@ function can_make(item, items, inventory, quantity) {
             how_to_make[item] = inventory[item];
         }
     }
-    if (!items[item].hasOwnProperty("recipe")) { 
+    if (!items[item].hasOwnProperty("recipe")) {
         var current_quant = inventory[item];
         if ( current_quant >= quantity ) {
             how_to_make[item] = quantity;
@@ -40,11 +40,18 @@ function can_make(item, items, inventory, quantity) {
     return how_to_make;
 }
 
+function get_item_image_path(item) {
+    var base = "/static/images/items/200px-";
+    return base + item.replace(/ /g, " ").toLowerCase() + ".png";
+}
+
 function populate_item_table(items) {
     $.each(items, function(item) {
         $("#items").find('tbody').append(
             $('<tr>').append(
-                $('<td>').text(item),
+                $('<td>').append(
+                    $("<img>").attr("src", get_item_image_path(item)),
+                    $("<span>").text(item)),
                 $('<td>').append(
                     $("<input>",
                         {type: "number", step:"0.01"})
@@ -65,7 +72,7 @@ function inventory_table_inputs(items) {
     $.each(items, function(item) {
         select.append($("<option></option>")
                         .attr("value", item)
-                        .text(item)); 
+                        .text(item));
     });
 	select.enterKey(add_item);
     $("#inventoryquantity").enterKey(add_item);
@@ -83,10 +90,10 @@ function update_inventory(item, quantity_change) {
     var tbody = $("#inventory tbody");
     var td = tbody.find("tr td:contains(" + item + ")");
     if (td.length == 1) {
-        var q = $(td).siblings().eq(0);
-        var price = $(td).siblings().eq(1);
+        var q = $(td).siblings().eq(2);
+        var price = $(td).siblings().eq(3);
         var new_quant = parseInt(q.text()) + parseInt(quantity_change);
-        price.text(get_price(item) * new_quant);
+        price.text((get_price(item) * new_quant).toMoney());
         if (new_quant == 0) {
             td.parents("tr").remove();
         } else {
@@ -100,15 +107,22 @@ function update_inventory(item, quantity_change) {
 
 function create_inventory_row(item, quantity, price) {
     return $('<tr>').append(
-        $('<td>')
-        .append(
-            $("<button>").click(function() {
+        $('<td>').addClass('noborder').append(
+            $("<button>").addClass('remove')
+            .click(function() {
                 $(this).parents("tr").remove();
                 update_can_make();
-            }).text("X")
-        ).append($("<span>").text(item)),
+                update_total();
+            }).html("&#10006;")
+        ),
+        $('<td>').addClass('itemname').append(
+            $("<span>").text(item)
+        ),
+        $('<td>').append(
+            $("<img>").attr("src", get_item_image_path(item))
+        ),
         $('<td>').text(quantity),
-        $('<td>').text(quantity * price)
+        $('<td>').text((quantity * price).toMoney())
     )
 }
 
@@ -140,7 +154,7 @@ function get_recipe(item) {
 
 function get_price(item) {
     var items = get_all_items();
-    return items[item].price;
+    return parseFloat(items[item].price);
 }
 
 function update_total() {
@@ -149,7 +163,7 @@ function update_total() {
     for (var item in inv) {
         total +=  get_price(item) * inv[item];
     }
-    $("#total").text(total);
+    $("#total").text(total.toMoney());
 }
 
 // Translate inventory table to obj
@@ -158,7 +172,7 @@ function get_inventory() {
     var inv = {};
     $.each(trs, function() {
         var tds = $(this).find("td");
-        inv[$(tds.find("span")).text()] = parseInt($(tds.get(1)).text());
+        inv[$(tds.find("span")).text()] = parseInt($(tds.get(3)).text());
     });
     return inv;
 }
@@ -183,8 +197,10 @@ function update_can_make() {
 function create_crafting_row(item) {
     return $("<tr>").append(
         $("<td>").text(item),
-        $('<td>').text(get_price(item)),
-        $('<td>').text(JSON.stringify(get_recipe(item))),
+        $('<td>').text(get_price(item).toMoney()),
+        $('<td>').text(
+            JSON.stringify(get_recipe(item))
+            ),
         $("<td>").append(
                 $("<button>").text("Craft").click(function() {
                 var item = $(this).parents("tr").find("td").eq(0).text();
@@ -213,6 +229,34 @@ $.fn.enterKey = function (fnc) {
         })
     })
 }
+
+// From http://stackoverflow.com/a/2866613/1665365
+/*
+decimal_sep: character used as deciaml separtor, it defaults to '.' when omitted
+thousands_sep: char used as thousands separator, it defaults to ',' when omitted
+*/
+Number.prototype.toMoney = function(decimals, decimal_sep, thousands_sep)
+{
+   var n = this,
+   c = isNaN(decimals) ? 2 : Math.abs(decimals), //if decimal is zero we must take it, it means user does not want to show any decimal
+   d = decimal_sep || '.', //if no decimal separator is passed we use the dot as default decimal separator (we MUST use a decimal separator)
+
+   /*
+   according to [http://stackoverflow.com/questions/411352/how-best-to-determine-if-an-argument-is-not-sent-to-the-javascript-function]
+   the fastest way to check for not defined parameter is to use typeof value === 'undefined' 
+   rather than doing value === undefined.
+   */
+   t = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep, //if you don't want to use a thousands separator you can pass empty string as thousands_sep value
+
+   sign = (n < 0) ? '-' : '',
+
+   //extracting the absolute value of the integer part of the number and converting to string
+   i = parseInt(n = Math.abs(n).toFixed(c)) + '',
+
+   j = ((j = i.length) > 3) ? j % 3 : 0;
+   return sign + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : ''); 
+}
+
 
 $(function () {
     $.getJSON( "/base.json", function(items) {

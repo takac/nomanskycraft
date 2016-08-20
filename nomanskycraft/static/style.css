@@ -6,16 +6,22 @@
 body {
     padding-bottom: 50px;
 }
+
 #items {
-    width: 500px;
+    width: 70%;
     margin-right: auto;
     margin-left: auto;
+}
+
+img {
+    height: 50px;
+    width: 50px;
 }
 
 #inventory {
     margin: auto;
     position:relative;
-    width: 500px;
+    width: 70%;
     min-height: 200px;
 }
 #inventory table {
@@ -35,23 +41,28 @@ body {
 #canmake {
     float: left;
     margin: auto;
-    width: 500px;
+    width: 70%;
     min-height: 200px;
 }
 
-table, th, td{ 
-    margin-left: auto;
-    margin-right: auto;
-    cellspacing:5px;
-    cellpadding: 20px;
-    width: 100%;
+table {
+  border-collapse: collapse;
+  width: 100%;
 }
 th, td {
-    border: 2px solid black;
-    padding: 15px;
+  padding: 0.25rem;
+  text-align: left;
+  border: 1px solid #ccc;
 }
-
 
 h1, h2, h3, h4 {
     text-align: center;
+}
+.remove {
+    color: red;
+}
+.noborder {
+    text-align: right;
+    border: 0;
+    width: 10px;
 }
