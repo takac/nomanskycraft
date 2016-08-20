@@ -42,7 +42,7 @@ function can_make(item, items, inventory, quantity) {
 
 function get_item_image_path(item) {
     var base = "/static/images/items/200px-";
-    return base + item.replace(/ /g, " ").toLowerCase() + ".png";
+    return base + item.replace(/ /g, "-").toLowerCase() + ".png";
 }
 
 function populate_item_table(items) {
@@ -57,7 +57,7 @@ function populate_item_table(items) {
         }
         $("#items").find('tbody').append(
             $('<tr>').attr('id', item_to_link(item)).append(
-                $('<td>').append(
+                $('<td>').addClass('itemcolumn').append(
                     $("<img>").attr("src", get_item_image_path(item)),
                     $("<span>").text(item).addClass('name')),
                 $('<td>').append(

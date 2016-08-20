@@ -73,3 +73,6 @@ a:visited{
 .breakline {
  display: block;
  }
+ .itemcolumn {
+     width: 30%
+ }

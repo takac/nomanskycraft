@@ -1,43 +1,282 @@
 {
-    "Iridium": { "price": 100.4, "change": 4.3 },
-    "Aluminium": { "price": 159.6, "change": -3.3 },
-    "Carbon": { "price": 7.2, "change": 4.3 },
-    "Platinum": { "price": 54.8, "change": -0.3 },
-    "Nickel": { "price": 136.5, "change": -0.8 },
-    "Iron": { "price": 13.6, "change": -1.4 },
-    "Bypass Chip": { "price": 3706.2, "change": 3.7, "recipe": { "Plutonium": 10, "Iron": 10 } },
-    "Shielding Sheet": { "price": 1046.7, "change": 1.5, "recipe": { "Iron": 75 } },
-    "Shielding Plate": { "price": 3046.7, "change": 1.5 , "fake": "True", "recipe": { "Iron": 50 } },
-    "Shielding Shard": { "price": 3046.7, "change": 1.5 , "fake": "True", "recipe": { "Iron": 25 } },
-    "Carite Sheet": { "price": 1046.7, "change": 1.5 , "fake": "True", "recipe": { "Iron": 50 } },
-    "Lemmium": {"price": 30121, "change": 1.5, "fake": "True", "recipe": { "Titanium": 100, "Plutonium": 100 } },
-    "Antimatter": {"price": 5121, "change": 1.5, "fake": "True", "recipe": { "Electron Vapor": 1, "Heridium": 50, "Zinc": 20 } },
-    "Electron Vapor": {"price": 4121, "change": 1.5, "fake": "True", "recipe": { "Suspension Fluid": 1, "Plutonium": 100 } },
-    "Thamium9": {"price": 121, "change": 1.5, "fake": "True" },
-    "Microdensity Fabric": {"price": 21, "change": 1.5, "fake": "True", "recipe": { "Iron": 50, "Platinum": 10 } },
-    "Power Canister": {"price": 3121, "change": 1.5, "fake": "True", "recipe": { "Carbon": 50 } },
-    "Hero": {"price": 1021, "change": 1.5, "fake": "True" },
-    "Emeril": {"price": 351, "change": 1.5, "fake": "True" },
-    "Warp Cell": {"price": 351, "change": 1.5, "fake": "True", "recipe": { "Antimatter": 1, "Thamium9": 100 } },
-    "Crolium": {"price": 351, "change": 1.5, "fake": "True", "recipe": { "Chrysonite": 80, "Iridium": 100 } },
-    "Herox": {"price": 351, "change": 1.5, "fake": "True", "recipe": { "Platinum": 20, "Zinc": 20 } },
-    "Magmox": {"price": 351, "change": 1.5, "fake": "True", "recipe": { "Carbon": 30, "Thamium9": 300, "Plutonium": 300 } },
-    "Terumin": {"price": 351, "change": 1.5, "fake": "True", "recipe": { "Emeril": 40, "Gold": 40, "Hero": 1 } },
-    "Gold": {"price": 351, "change": 1.5, "fake": "True" },
-    "Power Gel": {"price": 3121, "change": 1.5, "fake": "True", "recipe": { "Carbon": 25 } },
-    "Aronium": {"price": 4121, "change": 1.5, "fake": "True", "recipe": { "Iron": 50, "Carbon": 50 } },
-    "Power Reservoir": { "price": 532.8, "change": 3.3, "recipe": { "Carbon": 75 } },
-    "Dynamic Resonator": { "price": 28604, "change": 4.0, "recipe": { "Antimatter": 2, "Chrysonite": 100, "Microdensity Fabric": 4 } },
-    "Suspension Fluid": { "price": 1095.8, "change": -0.4, "recipe": { "Carbon": 50 } },
-    "Zinc": { "price": 85, "change": 106 },
-    "Heridium": { "price": 28.2, "change": 2.4 },
-    "Chrysonite": { "price": 77.7, "change": -5.8 },
-    "Titanium": { "price": 62.1, "change": 0.3 },
-    "Plutonium": { "price": 41, "change": -0.7 },
-    "Sac venom": { "price": 41, "change": 0.7 },
-    "Fascination Bead": { "price": 12370.2, "change": 0.0 },
-    "Vy'keen Dagger":{ "price": 39876.1, "change": 93.3 },
-    "Grantine": { "price": 36672.1, "change": 2.9 },
-    "Gravitino Ball": { "price": 54982, "change": 99.9 },
-    "Albumen Peral": { "price": 56105.8, "change": 104.0 }
+  "Platinum": {
+    "category": "resource",
+    "price": 55.0,
+    "rareity": "Uncommon",
+    "type": "Silicate Element"
+  },
+  "Grantine": {
+    "category": "component",
+    "price": 35646.0,
+    "type": "Neutral Metal Alloy"
+  },
+  "Thamium9": {
+    "category": "resource",
+    "price": 20.6,
+    "rareity": "Uncommon",
+    "type": "Isotope Element"
+  },
+  "Warp Cell": {
+    "category": "consumable",
+    "type": "Hyperdrive Charging Unit",
+    "price": 46750.0,
+    "recipe": {
+      "Antimatter": 1,
+      "Thamium9": 100
+    }
+  },
+  "Antimatter": {
+    "category": "component",
+    "type": "Technology component",
+    "price": 5232.0,
+    "recipe": {
+      "Heridium": 50,
+      "Electron Vapor": 1,
+      "Zinc": 20
+    }
+  },
+  "Shielding Plate": {
+    "category": "consumable",
+    "type": "Defensive Energy Source",
+    "price": 687.5,
+    "recipe": {
+      "Iron": 50
+    }
+  },
+  "Dynamic Resonator": {
+    "category": "product",
+    "type": "Component",
+    "price": 27500.0,
+    "recipe": {
+      "Chrysonite": 100,
+      "Microdensity Fabric": 4,
+      "Antimatter": 2
+    }
+  },
+  "Bypass Chip": {
+    "category": "device",
+    "type": "System Hacking Device",
+    "price": 3575.0,
+    "recipe": {
+      "Iron": 10,
+      "Plutonium": 10
+    }
+  },
+  "Shielding Shard": {
+    "category": "consumable",
+    "type": "Defensive Energy Battery",
+    "price": 343.8,
+    "recipe": {
+      "Iron": 25
+    }
+  },
+  "Shielding Sheet": {
+    "category": "consumable",
+    "type": "Defensive Energy Source",
+    "price": 1031.1,
+    "recipe": {
+      "Iron": 75
+    }
+  },
+  "Microdensity Fabric": {
+    "category": "component",
+    "type": "Technology component",
+    "price": 1650.0,
+    "recipe": {
+      "Platinum": 10,
+      "Iron": 50
+    }
+  },
+  "Herox": {
+    "category": "component",
+    "type": "Neutral Metal Alloy",
+    "price": 2887.0,
+    "recipe": {
+      "Platinum": 20,
+      "Zinc": 20
+    }
+  },
+  "Nickel": {
+    "category": "resource",
+    "price": 137.5,
+    "rareity": "Not common",
+    "type": "Neutral Element"
+  },
+  "Vy'keen Dagger": {
+    "category": "commodity",
+    "price": 20625.0,
+    "type": "Weapon"
+  },
+  "Aronium": {
+    "category": "component",
+    "type": "Neutral Metal Alloy",
+    "price": 1546.0,
+    "recipe": {
+      "Carbon": 50,
+      "Iron": 50
+    }
+  },
+  "Power Reservoir": {
+    "category": "consumable",
+    "type": "Energy Recharge Cell",
+    "price": 515.6,
+    "recipe": {
+      "Carbon": 75
+    }
+  },
+  "Gravitino Ball": {
+    "category": "trade commodity",
+    "price": 25000.0
+  },
+  "Fascination Bead": {
+    "category": "trade commodity",
+    "price": 12375.0
+  },
+  "Power Gel": {
+    "category": "consumable",
+    "type": "Energy Recharge Cell",
+    "price": 171.9,
+    "recipe": {
+      "Carbon": 25
+    }
+  },
+  "Albumen Pearl": {
+    "category": "trade commodity",
+    "price": 56105.8
+  },
+  "Crolium": {
+    "category": "component",
+    "type": "Neutral Metal Alloy",
+    "price": 35378.0,
+    "recipe": {
+      "Chrysonite": 80,
+      "Iridium": 100
+    }
+  },
+  "Carbon": {
+    "category": "resource",
+    "price": 6.9,
+    "rareity": "Common",
+    "type": "Isotope Element"
+  },
+  "Lemmium": {
+    "category": "component",
+    "type": "Neutral Metal Alloy",
+    "price": 30937.0,
+    "recipe": {
+      "Titanium": 100,
+      "Plutonium": 100
+    }
+  },
+  "Suspension Fluid": {
+    "price": 1100.0,
+    "recipe": {
+      "Carbon": 50
+    }
+  },
+  "Power Canister": {
+    "category": "consumable",
+    "type": "Energy Recharge Cell",
+    "price": 343.8,
+    "recipe": {
+      "Carbon": 50
+    }
+  },
+  "Aluminium": {
+    "category": "resource",
+    "price": 165.0,
+    "rareity": "Rare",
+    "type": "Neutral Element"
+  },
+  "Terumin": {
+    "category": "component",
+    "type": "Neutral Metal Alloy",
+    "price": 39105.0,
+    "recipe": {
+      "Emeril": 40,
+      "Herox": 1,
+      "Gold": 40
+    }
+  },
+  "Iridium": {
+    "category": "resource",
+    "price": 96.3,
+    "rareity": "Common",
+    "type": "Neutral Element"
+  },
+  "Magmox": {
+    "category": "component",
+    "type": "Neutral Metal Alloy",
+    "price": 30030.0,
+    "recipe": {
+      "Carbon": 30,
+      "Plutonium": 300,
+      "Thamium9": 300
+    }
+  },
+  "Iron": {
+    "category": "resource",
+    "price": 13.8,
+    "rareity": "Common",
+    "type": "Oxide Element"
+  },
+  "Carite Sheet": {
+    "category": "component",
+    "type": "Technology component",
+    "price": 825.0,
+    "recipe": {
+      "Iron": 50
+    }
+  },
+  "Plutonium": {
+    "category": "resource",
+    "price": 41.3,
+    "rareity": "Rare",
+    "type": "Isotope Element"
+  },
+  "Emeril": {
+    "category": "resource",
+    "price": 275.0,
+    "rareity": "Rare",
+    "type": "Neutral Element"
+  },
+  "Gold": {
+    "category": "resource",
+    "price": 220.0,
+    "rareity": "Rare",
+    "type": "Neutral Element"
+  },
+  "Chrysonite": {
+    "category": "resource",
+    "price": 82.5,
+    "rareity": "Rare",
+    "type": "Silicate Element"
+  },
+  "Titanium": {
+    "category": "resource",
+    "price": 61.9,
+    "rareity": "Rare",
+    "type": "Oxide Element"
+  },
+  "Zinc": {
+    "category": "resource",
+    "price": 41.3,
+    "rareity": "Uncommon",
+    "type": "Oxide Element"
+  },
+  "Heridium": {
+    "category": "resource",
+    "price": 27.5,
+    "rareity": "Common",
+    "type": "Silicate Element Element"
+  },
+  "Electron Vapor": {
+    "category": "component",
+    "type": "Technology component",
+    "price": 4950.0,
+    "recipe": {
+      "Suspension Fluid": 1,
+      "Plutonium": 100
+    }
+  }
 }
