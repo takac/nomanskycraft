@@ -1,0 +1,22 @@
+{
+  "name": "nomanskycraft",
+  "description": "Crafting for nomansky",
+  "main": "heroku local web",
+  "authors": [
+    "Tom Cammann"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "babel": "^5.8.38",
+    "jquery": "^3.1.0"
+  }
+}

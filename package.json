@@ -9,9 +9,14 @@
   "author": "Tom Cammann",
   "license": "ISC",
   "devDependencies": {
+    "bower": "^1.7.9",
     "eslint-plugin-standard": "^2.0.0",
     "graceful-fs": "^4.1.6",
     "gulp": "^3.9.1",
-    "gulp-eslint": "^3.0.1"
+    "gulp-eslint": "^3.0.1",
+    "gulp-exec": "^2.1.2",
+    "gulp-inject": "^4.1.0",
+    "gulp-load-plugins": "^1.2.4",
+    "wiredep": "^4.0.0"
   }
 }

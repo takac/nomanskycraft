@@ -1,7 +1,7 @@
 from flask import Flask, render_template, jsonify
 import json
-app = Flask(__name__)
 
+app = Flask(__name__, static_url_path='', static_folder='../build/public', template_folder='../build/templates')
 RECIPE_FILE = "base.json"
 
 

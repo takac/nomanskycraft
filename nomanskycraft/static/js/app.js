@@ -41,7 +41,7 @@ function canMake (item, inventory, quantity) {
 }
 
 function getItemImagePath (item) {
-    var base = '/static/images/items/200px-';
+    var base = '/images/items/200px-';
     return base + item.replace(/ /g, '-').toLowerCase() + '.png';
 }
 
@@ -371,6 +371,5 @@ $(function () {
         populateQuickAdd(Object.keys(items));
         setupAutocomplete();
         loadStorage();
-        // canMakeTest();
     })
 });
