@@ -7,13 +7,11 @@ RECIPE_FILE = "base.json"
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html.j2")
 
-
-@app.route("/hello")
-def hello():
-    return "Hello World!"
-
+@app.route("/home")
+def home():
+    return render_template("home.html.j2")
 
 @app.route("/base.json")
 def recipes():

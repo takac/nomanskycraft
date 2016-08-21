@@ -43,7 +43,7 @@ gulp.task('vendor-scripts', function() {
 });
 
 gulp.task('bower', ['vendor-scripts', 'scripts', 'css', 'images'], function () {
-  gulp.src('nomanskycraft/templates/*.html')
+  gulp.src('nomanskycraft/templates/*.j2')
     .pipe(wiredep.stream({
       fileTypes: {
         html: {
@@ -66,10 +66,16 @@ gulp.task('bower', ['vendor-scripts', 'scripts', 'css', 'images'], function () {
         }
       }))
     .pipe(plugins.inject(
-      gulp.src(['nomanskycraft/static/js/*.js'], { read: false }), {
+      gulp.src(['nomanskycraft/static/js/*.js', '!./nomanskycraft/static/js/app.js'], { read: false }), {
         addRootSlash: false,
         transform: function(filePath, file, i, length) {
           return '<script type="text/babel" src="' + filePath.replace('nomanskycraft/static/', '') + '"></script>';
+        }
+      }))
+      .pipe(plugins.inject(gulp.src('nomanskycraft/static/js/app.js', {read: false}), {
+          name: 'app',
+          transform: function(filePath, file, i, length) {
+              return '<script type="text/babel" src="' + filePath.replace('nomanskycraft/static/', '') + '"></script>';
         }
       }))
     .pipe(gulp.dest('build/templates'));

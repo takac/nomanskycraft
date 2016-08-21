@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "babel": "^5.8.38",
-    "jquery": "^3.1.0"
+    "jquery": "^3.1.0",
+    "react": "^15.3.1"
   }
 }
