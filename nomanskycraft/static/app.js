@@ -1,6 +1,28 @@
 "use strict";
 
+function make_test(item, inv, expected) {
+    var made = can_make(item, inv);
+    var passed = Object.equals(expected, made);
+
+    console.log("Test to make " + item + ": " + passed);
+	if (!passed){
+		console.log("expected: ");
+		console.log(expected);
+		console.log("actual: ");
+		console.log(made);
+	}
+}
+
+function can_make_test() {
+    make_test('Suspension Fluid', {'Carbon': 100}, {'Carbon': 50});
+    make_test('Electron Vapor', {'Carbon': 100, 'Plutonium': 100},
+              {'Suspension Fluid' : {'Carbon': 50}, 'Plutonium': 100});
+    make_test('Antimatter', {'Carbon': 100, 'Plutonium': 100, 'Zinc': 100, 'Heridium': 150},
+              {'Electron Vapor': {'Suspension Fluid' : {'Carbon': 50}, 'Plutonium': 100}, 'Zinc': 20, 'Heridium': 50});
+}
+
 function can_make(item, inventory, quantity) {
+    // console.log("Can we make " + item);
     if (typeof quantity === "undefined") {
         quantity = 1;
     }
@@ -83,7 +105,12 @@ function get_inventory(item) {
 
 function set_inventory(item, quant) {
     var inv = get_all_inventory();
-    inv[item] = parseInt(quant);
+    var quant = parseInt(quant);
+    if (quant === 0) {
+        delete inv[item];
+    } else {
+        inv[item] = parseInt(quant);
+    }
     localStorage.setItem('inventory', JSON.stringify(inv));
     render_inventory();
     render_crafting_table();
@@ -97,22 +124,17 @@ function get_all_inventory() {
     } else {
         inv = JSON.parse(inv);
     }
-    console.log("retrieve inv")
-    console.log(inv)
     return inv;
 }
 
 function render_inventory() {
     var tbody = $("#inventory tbody");
     var inv = get_all_inventory();
-    console.log("update inv")
-    console.log(inv)
     tbody.empty();
     for (var i in inv) {
         var quant = inv[i];
         tbody.append(create_inventory_row(i, quant, get_price(i)));
     }
-    console.log(inv);
     localStorage.setItem('inventory', JSON.stringify(inv));
     update_total();
 }
@@ -218,19 +240,35 @@ function create_crafting_row(item) {
         $('<td>').addClass('price').text(get_price(item).toMoney()),
         $('<td>').addClass('recipe').html(render_recipe(item)),
         $("<td>").append(
-                $("<button>").text("Craft").click(function() {
-                var item = $(this).parents("tr").find(".name").eq(0).text();
+            $("<button>").text("Craft").click(function() {
                 craft_item_from_inventory(item);
             })
     ))
 }
 
 function craft_item_from_inventory(item) {
-    var recipe = get_recipe(item);
-    for ( var recipe_item in recipe ) {
-        set_inventory(recipe_item, get_inventory(item)-parseInt(recipe[recipe_item]));
-    }
+    console.log("craft from inv");
+    var inv = get_all_inventory();
+    delete inv[item];
+    var recipe = can_make(item, inv);
+	remove_from_inventory(recipe);
     set_inventory(item, get_inventory(item)+1);
+}
+
+function clear_inventory() {
+	localStorage.removeItem('inventory');
+}
+
+function remove_from_inventory(recipe) {
+    for ( var recipe_item in recipe ) {
+		if (typeof recipe[recipe_item] === "object") {
+			remove_from_inventory(recipe[recipe_item]);
+		} else {
+			var new_quant = get_inventory(recipe_item) - parseInt(recipe[recipe_item]);
+			console.log("new quant " + recipe_item + ": " + new_quant);
+			set_inventory(recipe_item, new_quant);
+		}
+    }
 }
 
 function find_items_with_tag(tag) {
@@ -372,5 +410,6 @@ $(function () {
         populate_quick_add(Object.keys(items));
         setup_autocomplete();
         load_storage();
+        can_make_test();
     })
 });
