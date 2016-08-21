@@ -3,18 +3,21 @@
     "category": "resource",
     "price": 55.0,
     "rareity": "Uncommon",
-    "type": "Silicate Element"
+    "type": "Silicate Element",
+    "ref": "platinum"
   },
   "Grantine": {
     "category": "component",
     "price": 35646.0,
-    "type": "Neutral Metal Alloy"
+    "type": "Neutral Metal Alloy",
+    "ref": "grantine"
   },
   "Thamium9": {
     "category": "resource",
     "price": 20.6,
     "rareity": "Uncommon",
-    "type": "Isotope Element"
+    "type": "Isotope Element",
+    "ref": "thamium9"
   },
   "Warp Cell": {
     "category": "consumable",
@@ -23,7 +26,8 @@
     "recipe": {
       "Antimatter": 1,
       "Thamium9": 100
-    }
+    },
+    "ref": "warpcell"
   },
   "Antimatter": {
     "category": "component",
@@ -33,7 +37,8 @@
       "Heridium": 50,
       "Electron Vapor": 1,
       "Zinc": 20
-    }
+    },
+    "ref": "antimatter"
   },
   "Shielding Plate": {
     "category": "consumable",
@@ -41,7 +46,8 @@
     "price": 687.5,
     "recipe": {
       "Iron": 50
-    }
+    },
+    "ref": "shieldingplate"
   },
   "Dynamic Resonator": {
     "category": "product",
@@ -51,7 +57,8 @@
       "Chrysonite": 100,
       "Microdensity Fabric": 4,
       "Antimatter": 2
-    }
+    },
+    "ref": "dynamicresonator"
   },
   "Bypass Chip": {
     "category": "device",
@@ -60,7 +67,8 @@
     "recipe": {
       "Iron": 10,
       "Plutonium": 10
-    }
+    },
+    "ref": "bypasschip"
   },
   "Shielding Shard": {
     "category": "consumable",
@@ -68,7 +76,8 @@
     "price": 343.8,
     "recipe": {
       "Iron": 25
-    }
+    },
+    "ref": "shieldingshard"
   },
   "Shielding Sheet": {
     "category": "consumable",
@@ -76,7 +85,8 @@
     "price": 1031.1,
     "recipe": {
       "Iron": 75
-    }
+    },
+    "ref": "shieldingsheet"
   },
   "Microdensity Fabric": {
     "category": "component",
@@ -85,7 +95,8 @@
     "recipe": {
       "Platinum": 10,
       "Iron": 50
-    }
+    },
+    "ref": "microdensityfabric"
   },
   "Herox": {
     "category": "component",
@@ -94,18 +105,21 @@
     "recipe": {
       "Platinum": 20,
       "Zinc": 20
-    }
+    },
+    "ref": "herox"
   },
   "Nickel": {
     "category": "resource",
     "price": 137.5,
     "rareity": "Not common",
-    "type": "Neutral Element"
+    "type": "Neutral Element",
+    "ref": "nickel"
   },
   "Vy'keen Dagger": {
     "category": "commodity",
     "price": 20625.0,
-    "type": "Weapon"
+    "type": "Weapon",
+    "ref": "vy'keendagger"
   },
   "Aronium": {
     "category": "component",
@@ -114,7 +128,8 @@
     "recipe": {
       "Carbon": 50,
       "Iron": 50
-    }
+    },
+    "ref": "aronium"
   },
   "Power Reservoir": {
     "category": "consumable",
@@ -122,15 +137,18 @@
     "price": 515.6,
     "recipe": {
       "Carbon": 75
-    }
+    },
+    "ref": "powerreservoir"
   },
   "Gravitino Ball": {
     "category": "trade commodity",
-    "price": 25000.0
+    "price": 25000.0,
+    "ref": "gravitinoball"
   },
   "Fascination Bead": {
     "category": "trade commodity",
-    "price": 12375.0
+    "price": 12375.0,
+    "ref": "fascinationbead"
   },
   "Power Gel": {
     "category": "consumable",
@@ -138,11 +156,13 @@
     "price": 171.9,
     "recipe": {
       "Carbon": 25
-    }
+    },
+    "ref": "powergel"
   },
   "Albumen Pearl": {
     "category": "trade commodity",
-    "price": 56105.8
+    "price": 56105.8,
+    "ref": "albumenpearl"
   },
   "Crolium": {
     "category": "component",
@@ -151,13 +171,16 @@
     "recipe": {
       "Chrysonite": 80,
       "Iridium": 100
-    }
+    },
+    "ref": "crolium"
   },
   "Carbon": {
+    "tags": ["popular"],
     "category": "resource",
     "price": 6.9,
     "rareity": "Common",
-    "type": "Isotope Element"
+    "type": "Isotope Element",
+    "ref": "carbon"
   },
   "Lemmium": {
     "category": "component",
@@ -166,13 +189,17 @@
     "recipe": {
       "Titanium": 100,
       "Plutonium": 100
-    }
+    },
+    "ref": "lemmium"
   },
   "Suspension Fluid": {
     "price": 1100.0,
+    "category": "component",
+    "type": "Technology component",
     "recipe": {
       "Carbon": 50
-    }
+    },
+    "ref": "suspensionfluid"
   },
   "Power Canister": {
     "category": "consumable",
@@ -180,13 +207,15 @@
     "price": 343.8,
     "recipe": {
       "Carbon": 50
-    }
+    },
+    "ref": "powercanister"
   },
   "Aluminium": {
     "category": "resource",
     "price": 165.0,
     "rareity": "Rare",
-    "type": "Neutral Element"
+    "type": "Neutral Element",
+    "ref": "aluminium"
   },
   "Terumin": {
     "category": "component",
@@ -196,13 +225,15 @@
       "Emeril": 40,
       "Herox": 1,
       "Gold": 40
-    }
+    },
+    "ref": "terumin"
   },
   "Iridium": {
     "category": "resource",
     "price": 96.3,
     "rareity": "Common",
-    "type": "Neutral Element"
+    "type": "Neutral Element",
+    "ref": "iridium"
   },
   "Magmox": {
     "category": "component",
@@ -212,13 +243,16 @@
       "Carbon": 30,
       "Plutonium": 300,
       "Thamium9": 300
-    }
+    },
+    "ref": "magmox"
   },
   "Iron": {
+    "tags": ["popular"],
     "category": "resource",
     "price": 13.8,
     "rareity": "Common",
-    "type": "Oxide Element"
+    "type": "Oxide Element",
+    "ref": "iron"
   },
   "Carite Sheet": {
     "category": "component",
@@ -226,49 +260,61 @@
     "price": 825.0,
     "recipe": {
       "Iron": 50
-    }
+    },
+    "ref": "caritesheet"
   },
   "Plutonium": {
+    "tags": ["popular"],
     "category": "resource",
     "price": 41.3,
     "rareity": "Rare",
-    "type": "Isotope Element"
+    "type": "Isotope Element",
+    "ref": "plutonium"
   },
   "Emeril": {
     "category": "resource",
     "price": 275.0,
     "rareity": "Rare",
-    "type": "Neutral Element"
+    "type": "Neutral Element",
+    "ref": "emeril"
   },
   "Gold": {
     "category": "resource",
     "price": 220.0,
     "rareity": "Rare",
-    "type": "Neutral Element"
+    "type": "Neutral Element",
+    "ref": "gold"
   },
   "Chrysonite": {
+    "tags": ["popular"],
     "category": "resource",
     "price": 82.5,
     "rareity": "Rare",
-    "type": "Silicate Element"
+    "type": "Silicate Element",
+    "ref": "chrysonite"
   },
   "Titanium": {
+    "tags": ["popular"],
     "category": "resource",
     "price": 61.9,
     "rareity": "Rare",
-    "type": "Oxide Element"
+    "type": "Oxide Element",
+    "ref": "titanium"
   },
   "Zinc": {
     "category": "resource",
     "price": 41.3,
     "rareity": "Uncommon",
-    "type": "Oxide Element"
+    "type": "Oxide Element",
+    "ref": "zinc"
   },
   "Heridium": {
+    "tags": ["popular"],
     "category": "resource",
     "price": 27.5,
     "rareity": "Common",
-    "type": "Silicate Element Element"
+    "type": "Silicate Element Element",
+    "ref": "heridium"
   },
   "Electron Vapor": {
     "category": "component",
@@ -277,6 +323,7 @@
     "recipe": {
       "Suspension Fluid": 1,
       "Plutonium": 100
-    }
+    },
+    "ref": "electronvapor"
   }
 }

@@ -1,7 +1,10 @@
-function can_make(item, items, inventory, quantity) {
+"use strict";
+
+function can_make(item, inventory, quantity) {
     if (typeof quantity === "undefined") {
         quantity = 1;
     }
+    var items = get_all_items();
     var how_to_make = {};
     if (inventory.hasOwnProperty(item) && items[item].hasOwnProperty("recipe")) {
         if(inventory[item] >= quantity) {
@@ -25,7 +28,7 @@ function can_make(item, items, inventory, quantity) {
     }
     for (var recipe_item in items[item].recipe) {
         var q = items[item].recipe[recipe_item];
-        out = can_make(recipe_item, items, inventory, q);
+        var out = can_make(recipe_item, inventory, q);
         if ( typeof out ===  "undefined" ) {
             return;
         } else {
@@ -45,85 +48,73 @@ function get_item_image_path(item) {
     return base + item.replace(/ /g, "-").toLowerCase() + ".png";
 }
 
-function populate_item_table(items) {
-    $.each(items, function(item) {
-        var required_for = [];
-        for (var i in items) {
-            if ( items[i].hasOwnProperty('recipe') ) {
-                if ( items[i]['recipe'].hasOwnProperty(item) ) {
-                    required_for.push(i);
-                }
+function item_require_for_recipes(item) {
+    var required_for = [];
+    for (var i in items) {
+        if ( items[i].hasOwnProperty('recipe') ) {
+            if ( items[i]['recipe'].hasOwnProperty(item) ) {
+                required_for.push(i);
             }
         }
-        $("#items").find('tbody').append(
-            $('<tr>').attr('id', item_to_link(item)).append(
-                $('<td>').addClass('itemcolumn').append(
-                    $("<img>").attr("src", get_item_image_path(item)),
-                    $("<span>").text(item).addClass('name')),
-                $('<td>').append(
-                    $("<input>",
-                        {type: "number", step:"0.01"})
-                    .val(items[item].price)
-                    .addClass('price')
-                    .change(function() {
-                        update_inventory(item, 0);
-                        update_can_make();
-                    })
-                ),
-                $('<td>')
-                .addClass('recipe')
-                .html(render_recipe(item, items[item].recipe || {}))
-                .data("recipe", items[item].recipe), $('<td>').html(function() {
-                    return required_for.map(function(i) {
-                        return "<a href='#" + item_to_link(i) + "'>" + i + "</a>";
-                    }).join(", ");
-                })
+    }
+    return required_for;
+}
 
-            )
-        )
-    })
+function item_from_link(ref) {
+    var all = get_all_items()
+    return Object.keys(all).filter(
+        function(item) {
+            return all[item].ref === ref;
+        })[0];
 }
 
 function item_to_link(item) {
-    return item.replace(/ /g, "").toLowerCase();
+    return "#" + get_all_items()[item]['ref'];
 }
 
-function inventory_table_inputs(items) {
-    var select = $("#inventoryitem")
-    $.each(items, function(item) {
-        select.append($("<option></option>")
-                        .attr("value", item)
-                        .text(item));
-    });
-	select.enterKey(add_item);
-    $("#inventoryquantity").enterKey(add_item);
-    $("#inventoryadd").click(add_item);
-
-}
-function add_item() {
-	var item = $("#inventoryitem").val();
-	var quant = $("#inventoryquantity").val();
-	update_inventory(item, quant);
-	update_can_make();
-}
-
-function update_inventory(item, quantity_change) {
-    var tbody = $("#inventory tbody");
-    var tr = tbody.find("tr:contains(" + item + ")");
-    if (tr.length == 1) {
-        var q = $(tr).find('.quantity');
-        var price = $(tr).find('.price');
-        var new_quant = parseInt(q.text()) + parseInt(quantity_change);
-        price.text((get_price(item) * new_quant).toMoney());
-        if (new_quant == 0) {
-            tr.remove();
-        } else {
-            q.text(new_quant);
-        }
-    } else if (quantity_change > 0) {
-        tbody.append(create_inventory_row(item, quantity_change, get_price(item)));
+function get_inventory(item) {
+    var inv = get_all_inventory();
+    var quant = inv[item];
+    if(typeof quant === "undefined") {
+        return 0;
     }
-    update_total()
+    return parseInt(inv[item]);
+}
+
+function set_inventory(item, quant) {
+    var inv = get_all_inventory();
+    inv[item] = parseInt(quant);
+    localStorage.setItem('inventory', JSON.stringify(inv));
+    render_inventory();
+    render_crafting_table();
+}
+
+function get_all_inventory() {
+    var inv = localStorage.getItem('inventory');
+    if (inv == null) {
+        inv = {}
+        localStorage.setItem('inventory', JSON.stringify(inv));
+    } else {
+        inv = JSON.parse(inv);
+    }
+    console.log("retrieve inv")
+    console.log(inv)
+    return inv;
+}
+
+function render_inventory() {
+    var tbody = $("#inventory tbody");
+    var inv = get_all_inventory();
+    console.log("update inv")
+    console.log(inv)
+    tbody.empty();
+    for (var i in inv) {
+        var quant = inv[i];
+        tbody.append(create_inventory_row(i, quant, get_price(i)));
+    }
+    console.log(inv);
+    localStorage.setItem('inventory', JSON.stringify(inv));
+    update_total();
 }
 
 function create_inventory_row(item, quantity, price) {
@@ -132,12 +123,11 @@ function create_inventory_row(item, quantity, price) {
             $("<button>").addClass('remove')
             .click(function() {
                 $(this).parents("tr").remove();
-                update_can_make();
-                update_total();
+                set_inventory(item, 0);
             }).html("&#10006;")
         ),
         $('<td>').append(
-            $("<a>").attr('href', '#'+item_to_link(item)).addClass('name').text(item)
+            $("<span>").addClass('name').text(item).click(function() { update_info(item) })
         ),
         $('<td>').append(
             $("<img>").attr("src", get_item_image_path(item))
@@ -153,24 +143,27 @@ function get_item(item) {
     return items[item];
 }
 
-// Translate item table into object
 function get_all_items() {
-    var items = {};
-    $("#items").find('tbody tr').each(function(idx, tr) {
-        var tds = $(tr).find("td");
-        var item = {"price": tds.find("input.price").val()};
-        var recipe = tds.eq(2).text();
-        if ( recipe !== "" ) {
-            item["recipe"] = tds.eq(2).data('recipe')
-        }
-        items[tds.eq(0).text()] = item;
-    });
-    return items;
+    return window.items;
 }
 
 function get_recipe(item) {
     var items = get_all_items();
     return items[item].recipe;
+}
+
+function get_metadata(item) {
+    var items = get_all_items();
+    var meta = {};
+    var category = items[item]['category'];
+    var type = items[item]['category'];
+    if(typeof category !== "undefined") {
+        meta['category'] = category;
+    }
+    if(typeof type !== "undefined") {
+        meta['type'] = type;
+    }
+    return meta;
 }
 
 function get_price(item) {
@@ -180,34 +173,23 @@ function get_price(item) {
 
 function update_total() {
     var total = 0;
-    var inv = get_inventory();
+    var inv = get_all_inventory();
     for (var item in inv) {
         total +=  get_price(item) * inv[item];
     }
     $("#total").text(total.toMoney());
 }
 
-// Translate inventory table to obj
-function get_inventory() {
-    var trs = $("#inventory").find('tbody tr');
-    var inv = {};
-    $.each(trs, function() {
-        var tds = $(this).find("td");
-        inv[tds.find(".name").text()] = parseInt($(tds.get(3)).text());
-    });
-    return inv;
-}
-
 // Recreate crafting table
-function update_can_make() {
-    var inv = get_inventory();
+function render_crafting_table() {
+    var inv = get_all_inventory();
     var tbody = $("#canmake tbody");
     tbody.find("tr").remove();
     for (var item in get_all_items()) {
         if ( get_item(item).hasOwnProperty("recipe") ) {
             var tmp_inv = jQuery.extend({}, inv)
             delete tmp_inv[item]
-            made = can_make(item, get_all_items(), tmp_inv);
+            var made = can_make(item, tmp_inv);
             if (! (typeof made === "undefined") && ! made.hasOwnProperty(item) ) {
                 tbody.append(create_crafting_row(item));
             }
@@ -220,7 +202,13 @@ function render_recipe(item, recipe) {
         recipe = get_recipe(item);
     }
     return Object.keys(recipe).map(function(i) {
-        return "<span class='breakline'><a href='#" + item_to_link(i) + "'>" + i + "</a> x"+recipe[i]+"</span>";
+        return $("<span>")
+            // .addClass('breakline')
+            .append(
+                $("<span>").addClass('name').text(i).click(function() {
+                    update_info(i);
+                }), " x"+recipe[i]
+            )
     });
 }
 
@@ -240,62 +228,149 @@ function create_crafting_row(item) {
 function craft_item_from_inventory(item) {
     var recipe = get_recipe(item);
     for ( var recipe_item in recipe ) {
-        update_inventory(recipe_item, -recipe[recipe_item]);
+        set_inventory(recipe_item, get_inventory(item)-parseInt(recipe[recipe_item]));
     }
-    update_inventory(item, 1);
-    update_can_make();
+    set_inventory(item, get_inventory(item)+1);
 }
 
-// From http://stackoverflow.com/questions/979662/how-to-detect-pressing-enter-on-keyboard-using-jquery
-$.fn.enterKey = function (fnc) {
-    return this.each(function () {
-        $(this).keypress(function (ev) {
-            var keycode = (ev.keyCode ? ev.keyCode : ev.which);
-            if (keycode == '13') {
-                fnc.call(this, ev);
+function find_items_with_tag(tag) {
+    var items = get_all_items();
+    var tagged = Object.keys(items).filter(function(item) {
+        if (items[item].hasOwnProperty('tags')) {
+            var tags = items[item]['tags'];
+            if (tags.indexOf(tag) > -1) {
+                return true;
             }
-        })
-    })
+        }
+    });
+    return tagged;
+}
+function populate_quick_add(items) {
+    var quicklist = $("#quicklist");
+    quicklist.empty();
+    $.each(items, function(idx, item) {
+        quicklist.append(
+            $("<li>").addClass("quick")
+            .append($("<img>").attr("src", get_item_image_path(item)))
+            .append($("<span>").text(item))
+            .click(function() {
+                update_info(item);
+            })
+        );
+    });
 }
 
-// From http://stackoverflow.com/a/2866613/1665365
-/*
-decimal_sep: character used as deciaml separtor, it defaults to '.' when omitted
-thousands_sep: char used as thousands separator, it defaults to ',' when omitted
-*/
-Number.prototype.toMoney = function(decimals, decimal_sep, thousands_sep)
-{
-   var n = this,
-   c = isNaN(decimals) ? 2 : Math.abs(decimals), //if decimal is zero we must take it, it means user does not want to show any decimal
-   d = decimal_sep || '.', //if no decimal separator is passed we use the dot as default decimal separator (we MUST use a decimal separator)
+function update_info(item) {
+    var info_div = $("#info");
+    // Don't update if we don't have to
+    if (info_div.find(item_to_link(item)).length > 0) {
+        return;
+    }
+    info_div.empty();
+    var info = info_div.append($("<div>").attr('id', item_to_link(item).slice(1)));
+    var metadata = get_metadata(item);
+    var required_for = item_require_for_recipes(item);
+    info.append(
+        $("<h4>").text(item),
+        $("<div>").append(
+            $("<img>").attr("src", get_item_image_path(item))
+        ),
+        $("<div>").append(
+            $("<span>").addClass('info').text("Price"),
+            $("<input>", {'type': 'number', 'step': 0.01}).val(get_price(item))
+                .change(function() {
+                    var new_price = parseFloat($(this).val());
+                    window.items[item].price = new_price;
+                    render_inventory();
+                })
+        )
+    );
 
-   /*
-   according to [http://stackoverflow.com/questions/411352/how-best-to-determine-if-an-argument-is-not-sent-to-the-javascript-function]
-   the fastest way to check for not defined parameter is to use typeof value === 'undefined' 
-   rather than doing value === undefined.
-   */
-   t = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep, //if you don't want to use a thousands separator you can pass empty string as thousands_sep value
+    for (var meta in metadata) {
+        info.append(
+            $("<div>").append(
+                $("<span>").addClass('info').text(meta.titleize()),
+                $("<span>").text(metadata[meta].titleize())
+            )
+        )
+    }
 
-   sign = (n < 0) ? '-' : '',
+    if ( required_for.length > 0 ) {
+        var required_html = required_for.map(function(req_item) {
+            return $("<span>").append(
+                    $("<span>").addClass('name')
+                .text(req_item)
+                .click(function() {
+                    update_info(req_item);
+                }), " "
+            );
+        });
+        info.append(
+            $("<div>").append(
+                $("<span>").addClass('info').text("Required For"),
+                $("<span>").append(required_html)
+            )
+        );
+    }
 
-   //extracting the absolute value of the integer part of the number and converting to string
-   i = parseInt(n = Math.abs(n).toFixed(c)) + '',
+    if ( get_recipe(item) ) {
+        info.append(
+            $("<div>").append(
+                $("<span>").addClass('info').text("Recipe"),
+                $("<span>").html(render_recipe(item))
+            )
+        );
+    }
 
-   j = ((j = i.length) > 3) ? j % 3 : 0;
-   return sign + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : ''); 
+    info.append(
+        $("<div>").attr('id', 'add').append(
+            $("<input>", {'type': 'button', 'value': 'Add'})
+            .click(
+                function() {
+                    var input_quant = parseInt($('#addqaunt').val());
+                    var quant = get_inventory(item) + input_quant;
+                    set_inventory(item, quant)
+                }),
+            $("<input>", {'id': 'addqaunt', 'type': 'number', 'value': '10', 'step': 1})
+        )
+    )
+    localStorage.setItem('focused_item', item);
+    window.location.href = item_to_link(item)
 }
 
+window.onpopstate = function(event) {
+    var hash = document.location.hash
+    if (hash.length > 0) {
+        console.log("hash " + hash);
+        update_info(item_from_link(hash.slice(1)));
+    }
+}
+
+function setup_autocomplete() {
+    $("#inventoryitem").keyup(function() {
+        var val = $(this).val();
+        var matched = Object.keys(get_all_items()).filter(function(item) {
+            var re = new RegExp(val, "i");
+            return re.test(item);
+        });
+        populate_quick_add(matched);
+    });
+}
+
+function load_storage() {
+    render_inventory();
+    render_crafting_table();
+    var focused_item = localStorage.getItem('focused_item');
+    if (focused_item !== null) {
+        update_info(focused_item);
+    }
+}
 
 $(function () {
     $.getJSON( "/base.json", function(items) {
-        // $("#itemstable").toggle();
-        populate_item_table(items)
-        inventory_table_inputs(items)
-        $("#inventoryitem").chosen();
-        $("#toggleitems").click(function() { $("#itemstable").toggle() });
-        update_inventory('Carbon', 250);
-        update_inventory('Plutonium', 250);
-        update_inventory('Iron', 250);
-        update_can_make();
+        window.items = items;
+        populate_quick_add(Object.keys(items));
+        setup_autocomplete();
+        load_storage();
     })
 });
