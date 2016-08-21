@@ -1,1 +1,1 @@
-from nomanskycraft.app import app as application
+from nomanskycraft.app import app as application # noqa

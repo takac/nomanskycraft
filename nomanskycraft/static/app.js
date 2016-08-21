@@ -1,158 +1,134 @@
-"use strict";
+'use strict'
 
-function make_test(item, inv, expected) {
-    var made = can_make(item, inv);
-    var passed = Object.equals(expected, made);
-
-    console.log("Test to make " + item + ": " + passed);
-	if (!passed){
-		console.log("expected: ");
-		console.log(expected);
-		console.log("actual: ");
-		console.log(made);
-	}
-}
-
-function can_make_test() {
-    make_test('Suspension Fluid', {'Carbon': 100}, {'Carbon': 50});
-    make_test('Electron Vapor', {'Carbon': 100, 'Plutonium': 100},
-              {'Suspension Fluid' : {'Carbon': 50}, 'Plutonium': 100});
-    make_test('Antimatter', {'Carbon': 100, 'Plutonium': 100, 'Zinc': 100, 'Heridium': 150},
-              {'Electron Vapor': {'Suspension Fluid' : {'Carbon': 50}, 'Plutonium': 100}, 'Zinc': 20, 'Heridium': 50});
-}
-
-function can_make(item, inventory, quantity) {
-    // console.log("Can we make " + item);
-    if (typeof quantity === "undefined") {
+function canMake (item, inventory, quantity) {
+    if (typeof quantity === 'undefined') {
         quantity = 1;
     }
-    var items = get_all_items();
-    var how_to_make = {};
-    if (inventory.hasOwnProperty(item) && items[item].hasOwnProperty("recipe")) {
-        if(inventory[item] >= quantity) {
-            how_to_make[item] = quantity;
-            return how_to_make;
-        }
-        else {
+    var items = getAllItems();
+    var howToMake = {};
+    if (inventory.hasOwnProperty(item) && items[item].hasOwnProperty('recipe')) {
+        if (inventory[item] >= quantity) {
+            howToMake[item] = quantity;
+            return howToMake;
+        } else {
             quantity = quantity - inventory[item];
-            how_to_make[item] = inventory[item];
+            howToMake[item] = inventory[item];
         }
     }
-    if (!items[item].hasOwnProperty("recipe")) {
-        var current_quant = inventory[item];
-        if ( current_quant >= quantity ) {
-            how_to_make[item] = quantity;
-            return how_to_make;
-        }
-        else {
+    if (!items[item].hasOwnProperty('recipe')) {
+        var currentQuant = inventory[item];
+        if (currentQuant >= quantity) {
+            howToMake[item] = quantity;
+            return howToMake;
+        } else {
             return;
         }
     }
-    for (var recipe_item in items[item].recipe) {
-        var q = items[item].recipe[recipe_item];
-        var out = can_make(recipe_item, inventory, q);
-        if ( typeof out ===  "undefined" ) {
+    for (var recipeItem in items[item].recipe) {
+        var q = items[item].recipe[recipeItem];
+        var out = canMake(recipeItem, inventory, q);
+        if (typeof out === 'undefined') {
             return;
         } else {
-            if ( out.hasOwnProperty(recipe_item) ){
-                how_to_make[recipe_item] = out[recipe_item]
-            }
-            else {
-                how_to_make[recipe_item] = out
+            if (out.hasOwnProperty(recipeItem)) {
+                howToMake[recipeItem] = out[recipeItem]
+            } else {
+                howToMake[recipeItem] = out
             }
         }
     }
-    return how_to_make;
+    return howToMake;
 }
 
-function get_item_image_path(item) {
-    var base = "/static/images/items/200px-";
-    return base + item.replace(/ /g, "-").toLowerCase() + ".png";
+function getItemImagePath (item) {
+    var base = '/static/images/items/200px-';
+    return base + item.replace(/ /g, '-').toLowerCase() + '.png';
 }
 
-function item_require_for_recipes(item) {
-    var required_for = [];
+function itemRequireForRecipes (item) {
+    var requiredFor = [];
+    var items = getAllItems();
     for (var i in items) {
-        if ( items[i].hasOwnProperty('recipe') ) {
-            if ( items[i]['recipe'].hasOwnProperty(item) ) {
-                required_for.push(i);
+        if (items[i].hasOwnProperty('recipe')) {
+            if (items[i]['recipe'].hasOwnProperty(item)) {
+                requiredFor.push(i);
             }
         }
     }
-    return required_for;
+    return requiredFor;
 }
 
-function item_from_link(ref) {
-    var all = get_all_items()
+function itemFromLink (ref) {
+    var all = getAllItems()
     return Object.keys(all).filter(
-        function(item) {
+        function (item) {
             return all[item].ref === ref;
         })[0];
 }
 
-function item_to_link(item) {
-    return "#" + get_all_items()[item]['ref'];
+function itemToLink (item) {
+    return '#' + getAllItems()[item]['ref'];
 }
 
-function get_inventory(item) {
-    var inv = get_all_inventory();
+function getInventory (item) {
+    var inv = getAllInventory();
     var quant = inv[item];
-    if(typeof quant === "undefined") {
+    if (typeof quant === 'undefined') {
         return 0;
     }
     return parseInt(inv[item]);
 }
 
-function set_inventory(item, quant) {
-    var inv = get_all_inventory();
-    var quant = parseInt(quant);
+function setInventory (item, quant) {
+    var inv = getAllInventory();
+    quant = parseInt(quant);
     if (quant === 0) {
         delete inv[item];
     } else {
         inv[item] = parseInt(quant);
     }
-    localStorage.setItem('inventory', JSON.stringify(inv));
-    render_inventory();
-    render_crafting_table();
+    window.localStorage.setItem('inventory', JSON.stringify(inv));
+    renderInventory();
+    renderCraftingTable();
 }
 
-function get_all_inventory() {
-    var inv = localStorage.getItem('inventory');
+function getAllInventory () {
+    var inv = window.localStorage.getItem('inventory');
     if (inv == null) {
         inv = {}
-        localStorage.setItem('inventory', JSON.stringify(inv));
+        window.localStorage.setItem('inventory', JSON.stringify(inv));
     } else {
         inv = JSON.parse(inv);
     }
     return inv;
 }
 
-function render_inventory() {
-    var tbody = $("#inventory tbody");
-    var inv = get_all_inventory();
+function renderInventory () {
+    var tbody = $('#inventory tbody');
+    var inv = getAllInventory();
     tbody.empty();
     for (var i in inv) {
         var quant = inv[i];
-        tbody.append(create_inventory_row(i, quant, get_price(i)));
+        tbody.append(createInventoryRow(i, quant, getPrice(i)));
     }
-    localStorage.setItem('inventory', JSON.stringify(inv));
-    update_total();
+    window.localStorage.setItem('inventory', JSON.stringify(inv));
+    updateTotal();
 }
 
-function create_inventory_row(item, quantity, price) {
+function createInventoryRow (item, quantity, price) {
     return $('<tr>').append(
         $('<td>').addClass('noborder').append(
-            $("<button>").addClass('remove')
-            .click(function() {
-                $(this).parents("tr").remove();
-                set_inventory(item, 0);
-            }).html("&#10006;")
+            $('<button>').addClass('remove')
+            .click(function () {
+                $(this).parents('tr').remove();
+                setInventory(item, 0);
+            }).html('&#10006;')
         ),
         $('<td>').append(
-            $("<span>").addClass('name').text(item).click(function() { update_info(item) })
+            $('<span>').addClass('name').text(item).click(function () { updateInfo(item) })
         ),
         $('<td>').append(
-            $("<img>").attr("src", get_item_image_path(item))
+            $('<img>').attr('src', getItemImagePath(item))
         ),
         $('<td>').addClass('quantity').text(quantity),
         $('<td>').addClass('price').text((quantity * price).toMoney())
@@ -160,256 +136,241 @@ function create_inventory_row(item, quantity, price) {
 }
 
 // fetch item price and recipe obj
-function get_item(item) {
-    var items = get_all_items();
+function getItem (item) {
+    var items = getAllItems();
     return items[item];
 }
 
-function get_all_items() {
+function getAllItems () {
     return window.items;
 }
 
-function get_recipe(item) {
-    var items = get_all_items();
+function getRecipe (item) {
+    var items = getAllItems();
     return items[item].recipe;
 }
 
-function get_metadata(item) {
-    var items = get_all_items();
+function getMetadata (item) {
+    var items = getAllItems();
     var meta = {};
     var category = items[item]['category'];
     var type = items[item]['category'];
-    if(typeof category !== "undefined") {
+    if (typeof category !== 'undefined') {
         meta['category'] = category;
     }
-    if(typeof type !== "undefined") {
+    if (typeof type !== 'undefined') {
         meta['type'] = type;
     }
     return meta;
 }
 
-function get_price(item) {
-    var items = get_all_items();
+function getPrice (item) {
+    var items = getAllItems();
     return parseFloat(items[item].price);
 }
 
-function update_total() {
+function updateTotal () {
     var total = 0;
-    var inv = get_all_inventory();
+    var inv = getAllInventory();
     for (var item in inv) {
-        total +=  get_price(item) * inv[item];
+        total += getPrice(item) * inv[item];
     }
-    $("#total").text(total.toMoney());
+    $('#total').text(total.toMoney());
 }
 
 // Recreate crafting table
-function render_crafting_table() {
-    var inv = get_all_inventory();
-    var tbody = $("#canmake tbody");
-    tbody.find("tr").remove();
-    for (var item in get_all_items()) {
-        if ( get_item(item).hasOwnProperty("recipe") ) {
-            var tmp_inv = jQuery.extend({}, inv)
-            delete tmp_inv[item]
-            var made = can_make(item, tmp_inv);
-            if (! (typeof made === "undefined") && ! made.hasOwnProperty(item) ) {
-                tbody.append(create_crafting_row(item));
+function renderCraftingTable () {
+    var inv = getAllInventory();
+    var tbody = $('#canmake tbody');
+    tbody.find('tr').remove();
+    for (var item in getAllItems()) {
+        if (getItem(item).hasOwnProperty('recipe')) {
+            var tmpInv = jQuery.extend({}, inv)
+            delete tmpInv[item]
+            var made = canMake(item, tmpInv);
+            if (!(typeof made === 'undefined') && !made.hasOwnProperty(item)) {
+                tbody.append(createCraftingRow(item));
             }
         }
     }
 }
 
-function render_recipe(item, recipe) {
-    if (typeof recipe === "undefined") {
-        recipe = get_recipe(item);
+function renderRecipe (item, recipe) {
+    if (typeof recipe === 'undefined') {
+        recipe = getRecipe(item);
     }
-    return Object.keys(recipe).map(function(i) {
-        return $("<span>")
+    return Object.keys(recipe).map(function (i) {
+        return $('<span>')
             // .addClass('breakline')
             .append(
-                $("<span>").addClass('name').text(i).click(function() {
-                    update_info(i);
-                }), " x"+recipe[i]
+                $('<span>').addClass('name').text(i).click(function () {
+                    updateInfo(i);
+                }), ' x' + recipe[i]
             )
     });
 }
 
-function create_crafting_row(item) {
-    return $("<tr>").append(
-        $("<td>").addClass('name').text(item),
-        $('<td>').addClass('price').text(get_price(item).toMoney()),
-        $('<td>').addClass('recipe').html(render_recipe(item)),
-        $("<td>").append(
-            $("<button>").text("Craft").click(function() {
-                craft_item_from_inventory(item);
+function createCraftingRow (item) {
+    return $('<tr>').append(
+        $('<td>').addClass('name').text(item),
+        $('<td>').addClass('price').text(getPrice(item).toMoney()),
+        $('<td>').addClass('recipe').html(renderRecipe(item)),
+        $('<td>').append(
+            $('<button>').text('Craft').click(function () {
+                craftItemFromInventory(item);
             })
     ))
 }
 
-function craft_item_from_inventory(item) {
-    console.log("craft from inv");
-    var inv = get_all_inventory();
+function craftItemFromInventory (item) {
+    var inv = getAllInventory();
     delete inv[item];
-    var recipe = can_make(item, inv);
-	remove_from_inventory(recipe);
-    set_inventory(item, get_inventory(item)+1);
+    var recipe = canMake(item, inv);
+    removeFromInventory(recipe);
+    setInventory(item, getInventory(item) + 1);
 }
 
-function clear_inventory() {
-	localStorage.removeItem('inventory');
-}
+// function clearInventory () {
+//     window.localStorage.removeItem('inventory');
+// }
 
-function remove_from_inventory(recipe) {
-    for ( var recipe_item in recipe ) {
-		if (typeof recipe[recipe_item] === "object") {
-			remove_from_inventory(recipe[recipe_item]);
-		} else {
-			var new_quant = get_inventory(recipe_item) - parseInt(recipe[recipe_item]);
-			console.log("new quant " + recipe_item + ": " + new_quant);
-			set_inventory(recipe_item, new_quant);
-		}
+function removeFromInventory (recipe) {
+    for (var recipeItem in recipe) {
+        if (typeof recipe[recipeItem] === 'object') {
+            removeFromInventory(recipe[recipeItem]);
+        } else {
+            var newQuant = getInventory(recipeItem) - parseInt(recipe[recipeItem]);
+            setInventory(recipeItem, newQuant);
+        }
     }
 }
 
-function find_items_with_tag(tag) {
-    var items = get_all_items();
-    var tagged = Object.keys(items).filter(function(item) {
-        if (items[item].hasOwnProperty('tags')) {
-            var tags = items[item]['tags'];
-            if (tags.indexOf(tag) > -1) {
-                return true;
-            }
-        }
-    });
-    return tagged;
-}
-function populate_quick_add(items) {
-    var quicklist = $("#quicklist");
+function populateQuickAdd (items) {
+    var quicklist = $('#quicklist');
     quicklist.empty();
-    $.each(items, function(idx, item) {
+    $.each(items, function (idx, item) {
         quicklist.append(
-            $("<li>").addClass("quick")
-            .append($("<img>").attr("src", get_item_image_path(item)))
-            .append($("<span>").text(item))
-            .click(function() {
-                update_info(item);
+            $('<li>').addClass('quick')
+            .append($('<img>').attr('src', getItemImagePath(item)))
+            .append($('<span>').text(item))
+            .click(function () {
+                updateInfo(item);
             })
         );
     });
 }
 
-function update_info(item) {
-    var info_div = $("#info");
+function updateInfo (item) {
+    var infoDiv = $('#info');
     // Don't update if we don't have to
-    if (info_div.find(item_to_link(item)).length > 0) {
+    if (infoDiv.find(itemToLink(item)).length > 0) {
         return;
     }
-    info_div.empty();
-    var info = info_div.append($("<div>").attr('id', item_to_link(item).slice(1)));
-    var metadata = get_metadata(item);
-    var required_for = item_require_for_recipes(item);
+    infoDiv.empty();
+    var info = infoDiv.append($('<div>').attr('id', itemToLink(item).slice(1)));
+    var metadata = getMetadata(item);
+    var requiredFor = itemRequireForRecipes(item);
     info.append(
-        $("<h4>").text(item),
-        $("<div>").append(
-            $("<img>").attr("src", get_item_image_path(item))
+        $('<h4>').text(item),
+        $('<div>').append(
+            $('<img>').attr('src', getItemImagePath(item))
         ),
-        $("<div>").append(
-            $("<span>").addClass('info').text("Price"),
-            $("<input>", {'type': 'number', 'step': 0.01}).val(get_price(item))
-                .change(function() {
-                    var new_price = parseFloat($(this).val());
-                    window.items[item].price = new_price;
-                    render_inventory();
+        $('<div>').append(
+            $('<span>').addClass('info').text('Price'),
+            $('<input>', {'type': 'number', 'step': 0.01}).val(getPrice(item))
+                .change(function () {
+                    var newPrice = parseFloat($(this).val());
+                    window.items[item].price = newPrice;
+                    renderInventory();
                 })
         )
     );
 
     for (var meta in metadata) {
         info.append(
-            $("<div>").append(
-                $("<span>").addClass('info').text(meta.titleize()),
-                $("<span>").text(metadata[meta].titleize())
+            $('<div>').append(
+                $('<span>').addClass('info').text(meta.titleize()),
+                $('<span>').text(metadata[meta].titleize())
             )
         )
     }
 
-    if ( required_for.length > 0 ) {
-        var required_html = required_for.map(function(req_item) {
-            return $("<span>").append(
-                    $("<span>").addClass('name')
-                .text(req_item)
-                .click(function() {
-                    update_info(req_item);
-                }), " "
+    if (requiredFor.length > 0) {
+        var requiredHtml = requiredFor.map(function (reqItem) {
+            return $('<span>').append(
+                    $('<span>').addClass('name')
+                .text(reqItem)
+                .click(function () {
+                    updateInfo(reqItem);
+                }), ' '
             );
         });
         info.append(
-            $("<div>").append(
-                $("<span>").addClass('info').text("Required For"),
-                $("<span>").append(required_html)
+            $('<div>').append(
+                $('<span>').addClass('info').text('Required For'),
+                $('<span>').append(requiredHtml)
             )
         );
     }
 
-    if ( get_recipe(item) ) {
+    if (getRecipe(item)) {
         info.append(
-            $("<div>").append(
-                $("<span>").addClass('info').text("Recipe"),
-                $("<span>").html(render_recipe(item))
+            $('<div>').append(
+                $('<span>').addClass('info').text('Recipe'),
+                $('<span>').html(renderRecipe(item))
             )
         );
     }
 
     info.append(
-        $("<div>").attr('id', 'add').append(
-            $("<input>", {'type': 'button', 'value': 'Add'})
+        $('<div>').attr('id', 'add').append(
+            $('<input>', {'type': 'button', 'value': 'Add'})
             .click(
-                function() {
-                    var input_quant = parseInt($('#addqaunt').val());
-                    var quant = get_inventory(item) + input_quant;
-                    set_inventory(item, quant)
+                function () {
+                    var inputQuant = parseInt($('#addqaunt').val());
+                    var quant = getInventory(item) + inputQuant;
+                    setInventory(item, quant)
                 }),
-            $("<input>", {'id': 'addqaunt', 'type': 'number', 'value': '10', 'step': 1})
+            $('<input>', {'id': 'addqaunt', 'type': 'number', 'value': '10', 'step': 1})
         )
     )
-    localStorage.setItem('focused_item', item);
-    window.location.href = item_to_link(item)
+    window.localStorage.setItem('focusedItem', item);
+    window.location.href = itemToLink(item)
 }
 
-window.onpopstate = function(event) {
+window.onpopstate = function (event) {
     var hash = document.location.hash
     if (hash.length > 0) {
-        console.log("hash " + hash);
-        update_info(item_from_link(hash.slice(1)));
+        updateInfo(itemFromLink(hash.slice(1)));
     }
 }
 
-function setup_autocomplete() {
-    $("#inventoryitem").keyup(function() {
+function setupAutocomplete () {
+    $('#inventoryitem').keyup(function () {
         var val = $(this).val();
-        var matched = Object.keys(get_all_items()).filter(function(item) {
-            var re = new RegExp(val, "i");
+        var matched = Object.keys(getAllItems()).filter(function (item) {
+            var re = new RegExp(val, 'i');
             return re.test(item);
         });
-        populate_quick_add(matched);
+        populateQuickAdd(matched);
     });
 }
 
-function load_storage() {
-    render_inventory();
-    render_crafting_table();
-    var focused_item = localStorage.getItem('focused_item');
-    if (focused_item !== null) {
-        update_info(focused_item);
+function loadStorage () {
+    renderInventory();
+    renderCraftingTable();
+    var focusedItem = window.localStorage.getItem('focusedItem');
+    if (focusedItem !== null) {
+        updateInfo(focusedItem);
     }
 }
 
 $(function () {
-    $.getJSON( "/base.json", function(items) {
+    $.getJSON('/base.json', function (items) {
         window.items = items;
-        populate_quick_add(Object.keys(items));
-        setup_autocomplete();
-        load_storage();
-        can_make_test();
+        populateQuickAdd(Object.keys(items));
+        setupAutocomplete();
+        loadStorage();
+        // canMakeTest();
     })
 });

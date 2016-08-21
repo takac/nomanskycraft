@@ -1,0 +1,17 @@
+{
+  "name": "nomanskycraft",
+  "version": "1.0.0",
+  "description": "Crafting for nomansky",
+  "main": "heroku local web",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tom Cammann",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint-plugin-standard": "^2.0.0",
+    "graceful-fs": "^4.1.6",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1"
+  }
+}
