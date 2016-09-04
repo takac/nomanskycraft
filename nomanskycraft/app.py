@@ -9,7 +9,7 @@ RECIPE_FILE = "base.json"
 def index():
     return render_template("index.html.j2")
 
-@app.route("/home")
+@app.route("/react")
 def home():
     return render_template("home.html.j2")
 

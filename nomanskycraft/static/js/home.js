@@ -140,8 +140,10 @@ var InventoryItem = React.createClass({
     }
 });
 
-ReactDOM.render(
-        <Content />,
-        document.getElementById('content')
-        );
+if ($("#react-content").length == 1) {
+    ReactDOM.render(
+            <Content />,
+            document.getElementById('react-content')
+            );
+}
 
